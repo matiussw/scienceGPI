@@ -7,13 +7,12 @@ using scienceGPI.shared.Entities;
 namespace scienceGPI.API.Controllers
 {
     [ApiController]
-    [Route("/api/projects")]
-    public class ProjectController: ControllerBase
+    [Route("/api/researchers")]
+    public class ReseachersController : ControllerBase
     {
-
         private readonly DataContext _context;
 
-        public ProjectController(DataContext context)
+        public ReseachersController(DataContext context)
         {
             _context = context;
         }
@@ -22,34 +21,34 @@ namespace scienceGPI.API.Controllers
         public async Task<IActionResult> GetAsync()
         {
 
-            return Ok(await _context.Projects.ToListAsync());
+            return Ok(await _context.Researchers.ToListAsync());
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var projects = await _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
-            if (projects == null)
+            var researcher = await _context.Researchers.FirstOrDefaultAsync(x => x.Cedula == id);
+            if (researcher == null)
             {
                 return NotFound();
             }
-            return Ok(projects);
+            return Ok(researcher);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> PostAsync(Project project)
+        [HttpPost("{id:int}")]
+        public async Task<ActionResult> PostAsync(Researcher researcher)
         {
             try
             {
-                _context.Add(project);
+                _context.Add(researcher);
                 await _context.SaveChangesAsync();
-                return Ok(project);
+                return Ok(researcher);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
-                    return BadRequest("Ya existe un Projecto con el mismo nombre.");
+                    return BadRequest("Ya existe un Investigador con el mismo Numero de cedula.");
                 }
 
                 return BadRequest(dbUpdateException.Message);
@@ -62,19 +61,19 @@ namespace scienceGPI.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> PutAsync(Project project)
+        public async Task<ActionResult> PutAsync(Researcher researcher)
         {
             try
             {
-                _context.Update(project);
+                _context.Update(researcher);
                 await _context.SaveChangesAsync();
-                return Ok(project);
+                return Ok(researcher);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
-                    return BadRequest("Ya existe un Projecto con el mismo nombre.");
+                    return BadRequest("Ya existe un Investigador con el mismo Numero de cedula.");
                 }
 
                 return BadRequest(dbUpdateException.Message);
@@ -89,7 +88,7 @@ namespace scienceGPI.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var categories = await _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
+            var categories = await _context.Researchers.FirstOrDefaultAsync(x => x.Cedula == id);
             if (categories == null)
             {
                 return NotFound();
